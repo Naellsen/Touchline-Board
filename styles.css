@@ -13,7 +13,7 @@ body{
     background: #450693;
 }
 
-#the-pitch{
+#pitch{
     position: relative;
     width: 100%;
     background: linear-gradient(to bottom, #00bc4e 0%, #00bc4e 50%, #009d42 50%, #009d42 100%);
@@ -23,6 +23,17 @@ body{
     border-radius: 8px;
     overflow: hidden;
 }
+.pitch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 0.68; /* taller than wide, since it's vertical now */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* 3 columns: left / center / right */
+  grid-template-rows: 0.8fr 1fr 1fr 1fr 0.8fr; /* 5 rows, top/bottom (goal areas) shorter */
+  gap: 2px;
+  background: #0d1a12;
+}
+
 .halfway-line{
     position: absolute;
     left: 50%;
