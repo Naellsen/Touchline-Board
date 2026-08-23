@@ -238,3 +238,44 @@ body{
 .tok.gk{
     background: #e0b040;
 }
+
+.role-menu {
+    position: fixed;
+    z-index: 1000;
+    background: #1e2a38;
+    border: 1px solid #3e5a70;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 100px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.role-menu.hidden{
+    display: none;
+}
+
+.role-menu button{
+    background: #2c3e50;
+    color: #ecf0f1;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.role-menu button:hover{
+    background: #1abc9c;
+    color: #111;
+}
+
+.role-menu button.current {
+    background: #f39c12;
+    color: #111;
+}
