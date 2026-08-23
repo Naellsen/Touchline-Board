@@ -9,20 +9,19 @@
 <body>
     <header>
         <h1>Touchline Board</h1>
-        <div class="dropdown">
-            <button class="dropbtn">Formation</button>
-            <div class="dropdown-content">
-                <button id="f443">4-3-3</button>
-                <button id="f4231">4-2-3-1</button>
-                <button id="f442">4-4-2</button>
+        <button id="open-formation-modal">Formation</button>
+        <div id="formation-modal" class="modal-overlay hidden">
+             <div class="modal">
+                <div class="modal-header">
+                    <h2>Choose Formation</h2>
+                    <button id="close-formation-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="formation-grid" id="formation-grid">       
+
+                </div>
             </div>
         </div>
-        <div class="add-enemy">
-            <button class="add-enemy-btn">Add Enemy</button>
-            <div class="dropdown-enemy">
-                <button></button>
-            </div>
-        </div>
+        <button id="open-enemy-modal">Add Enemy</button>   
     </header>
     <div id="main-menu">
         <div id="pitch" class="pitch">

@@ -43,7 +43,21 @@ const formations = {
     [70, 15, 'W'],
     [70, 85, 'W'],
     [90, 50, 'CF']
-  ]
+  ],
+  f343: [
+    [5, 50, 'GK'],
+    [18, 30, 'CB'],
+    [18, 50, 'CB'],
+    [18, 70, 'CB'],
+    [40, 15, 'WB'],
+    [40, 85, 'WB'],
+    [50, 35, 'CM'],
+    [50, 65, 'CM'],
+    [70, 50, 'AM'],
+    [70, 15, 'W'],
+    [70, 85, 'W'],
+    [90, 50, 'CF']
+  ],
 
 };
 
@@ -185,14 +199,51 @@ function makeDraggable(token, index) {
   });
 }
 
-document.getElementById('f443').addEventListener('click', () => {
-  activeFormation = 'f443';
-  renderFormation();
+const formationModal = document.getElementById('formation-modal');
+const formationGrid = document.getElementById('formation-grid');
+const openFormationBtn = document.getElementById('open-formation-modal');
+const closeFormationBtn = document.getElementById('close-formation-modal');
+
+function renderFormationButtons(){
+  formationGrid.innerHTML ='';
+  Object.keys(formations).forEach(key => {
+    const btn = document.createElement('button');
+    btn.className = 'formation-btn';
+    btn.textContent = key.toUpperCase();
+    btn.dataset.formation = key;
+    if (key === activeFormation) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      activeFormation = key;
+      renderFormation();
+      closeFormationModal();
+      renderFormationButtons();
+    });
+    formationGrid.appendChild(btn);
+  });
+}
+
+function openFormationModal() {
+  formationModal.classList.remove('hidden');
+  renderFormationButtons();
+}
+
+function closeFormationModal(){
+  formationModal.classList.add('hidden');
+}
+
+openFormationBtn.addEventListener('click', openFormationModal);
+closeFormationBtn.addEventListener('click', closeFormationModal);
+
+document.addEventListener('click', (e) => {
+  if(e.target === formationModal) closeFormationModal();
 });
 
-document.getElementById('f4231').addEventListener('click', () =>{
-  activeFormation = 'f4231';
-  renderFormation();
-})
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape'){
+    closeFormationModal();
+    closeRoleMenu();
+  }
+});
 
 renderFormation();
+renderFormationButtons()
