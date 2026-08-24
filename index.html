@@ -3,51 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Touchline_Board</title>
+    <title>Touchline Board</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <h1>Touchline Board</h1>
         <button id="open-formation-modal">Formation</button>
-        <div id="formation-modal" class="modal-overlay hidden">
-             <div class="modal">
-                <div class="modal-header">
-                    <h2>Choose Formation</h2>
-                    <button id="close-formation-modal" class="close-btn">&times;</button>
-                </div>
-                <div class="formation-grid" id="formation-grid">       
+        <button id="open-enemy-modal">Enemy Formation</button>
+    </header>
 
-                </div>
+    <!-- Your Formation Modal -->
+    <div id="formation-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Choose Formation</h2>
+                <button id="close-formation-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="formation-grid" id="formation-grid">
+                <!-- Your formation buttons injected by JS -->
             </div>
         </div>
-        <button id="open-enemy-modal">Add Enemy</button>   
-    </header>
+    </div>
+
+    <!-- Enemy Formation Modal -->
+    <div id="enemy-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Enemy Formation</h2>
+                <button id="close-enemy-modal" class="close-btn">&times;</button>
+            </div>
+
+            <!-- Man Marking Toggle Button -->
+            <button id="man-marking-toggle" class="man-marking-btn">Man‑to‑man marking: OFF</button>
+
+            <div class="formation-grid" id="enemy-formation-grid">
+                <!-- Enemy formation buttons injected by JS -->
+            </div>
+        </div>
+    </div>
+
     <div id="main-menu">
         <div id="pitch" class="pitch">
-            <!-- center-->
+            <!-- center -->
             <div class="halfway-line"></div>
             <div class="center-circle"></div>
             <div class="center-spot"></div>
-            <!-- left area-->
+            <!-- left area -->
             <div class="penalty-box left"></div>
             <div class="penalty-arc left"></div>
             <div class="penalty-spot left"></div>
             <div class="sixyard-area left"></div>
-            
-            <!-- right area-->
+            <!-- right area -->
             <div class="penalty-box right"></div>
             <div class="penalty-arc right"></div>
             <div class="penalty-spot right"></div>
             <div class="sixyard-area right"></div>
-
-            <!-- corner -->
+            <!-- corners -->
             <div class="corner top-left"></div>
             <div class="corner top-right"></div>
             <div class="corner bottom-left"></div>
             <div class="corner bottom-right"></div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

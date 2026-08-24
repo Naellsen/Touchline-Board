@@ -1,20 +1,26 @@
-header{
+body {
+    background: #1e2a38;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+header {
     background-color: #1e2a38;
     border-radius: 8px;
-    display: flex;                  
-    justify-content: space-between; 
-    align-items: center;            
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 15px 30px;
     color: white;
-    size: 70%;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-h1{
+h1 {
     font-family: monospace;
 }
 
-#open-formation-modal {
+#open-formation-modal,
+#open-enemy-modal {
     background: #2c3e50;
     color: #ecf0f1;
     border: none;
@@ -27,38 +33,11 @@ h1{
     transition: background 0.15s, transform 0.1s;
 }
 
-#open-formation-modal:hover {
-    background: #1abc9c;
-    color: #111;
-    transform: translateY(-2px);
-}
-
-#open-formation-modal.active {
-    background: #f39c12;
-    color: #111;
-}
-
-#open-enemy-modal {
-    background: #2c3e50;
-    color: #ecf0f1;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 10px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-}
-
+#open-formation-modal:hover,
 #open-enemy-modal:hover {
     background: #1abc9c;
     color: #111;
     transform: translateY(-2px);
-}
-
-#open-enemy-modal.active {
-    background: #f39c12;
-    color: #111;
 }
 
 /* Modal overlay */
@@ -117,7 +96,22 @@ h1{
     color: #e74c3c;
 }
 
-.formation-grid {
+/* Formation groups */
+.formation-group {
+    margin-bottom: 15px;
+}
+
+.formation-group-title {
+    color: #ecf0f1;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: left;
+    border-left: 3px solid #1abc9c;
+    padding-left: 8px;
+}
+
+.formation-group-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
@@ -128,14 +122,12 @@ h1{
     color: #ecf0f1;
     border: none;
     border-radius: 6px;
-    padding: 12px 10px;
+    padding: 14px 10px;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
     transition: background 0.15s, transform 0.1s;
-    padding: 14px 10px;
-    font-size: 15px;
     width: 100%;
 }
 
@@ -150,15 +142,38 @@ h1{
     color: #111;
 }
 
-body{
-    background: #1e2a38;
+/* Man marking button */
+.man-marking-btn {
+    background: #2c3e50;
+    color: #ecf0f1;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 12px;
+    transition: background 0.15s, transform 0.1s;
 }
 
-#main-menu{
+.man-marking-btn:hover {
+    background: #1abc9c;
+    color: #111;
+}
+
+.man-marking-btn.active {
+    background: #f39c12;
+    color: #111;
+}
+
+/* Pitch */
+#main-menu {
     width: min(100% - 32px, 960px);
     margin: 24px auto;
 }
-#pitch{
+
+#pitch {
     position: relative;
     width: 100%;
     background: linear-gradient(to bottom, #00bc4e 0%, #00bc4e 50%, #009d42 50%, #009d42 100%);
@@ -170,7 +185,7 @@ body{
     box-sizing: border-box;
 }
 
-.halfway-line{
+.halfway-line {
     position: absolute;
     left: 50%;
     top: 0;
@@ -179,7 +194,8 @@ body{
     background: rgb(255, 255, 255);
     transform: translateX(-50%);
 }
-.center-circle{
+
+.center-circle {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -187,9 +203,10 @@ body{
     aspect-ratio: 1;
     border: 2px solid rgb(255, 255, 255);
     border-radius: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
-.center-spot{
+
+.center-spot {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -197,65 +214,68 @@ body{
     height: 6px;
     background: rgb(255, 255, 255);
     border-radius: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
 .penalty-arc {
-  position: absolute;
-  top: 50%;
-  width: 20%;
-  aspect-ratio: 1;
-  border: 2px solid rgba(255, 255, 255, 0.995);
-  border-radius: 50%;
-  transform: translateY(-50%);
+    position: absolute;
+    top: 50%;
+    width: 20%;
+    aspect-ratio: 1;
+    border: 2px solid rgba(255, 255, 255, 0.995);
+    border-radius: 50%;
+    transform: translateY(-50%);
 }
 
 .penalty-arc.left {
-  left: 12%;
-  transform: translate(-50%, -50%);
-  clip-path: inset(0 0 0 70%); /* keep only the right sliver */
+    left: 12%;
+    transform: translate(-50%, -50%);
+    clip-path: inset(0 0 0 70%);
 }
 
 .penalty-arc.right {
-  right: 12%;
-  transform: translate(50%, -50%);
-  clip-path: inset(0 70% 0 0); /* keep only the left sliver */
+    right: 12%;
+    transform: translate(50%, -50%);
+    clip-path: inset(0 70% 0 0);
 }
 
-
-.penalty-box{
+.penalty-box {
     position: absolute;
     top: 21%;
     width: 16%;
     height: 58%;
     border: 2px solid rgb(255, 255, 255);
 }
-.penalty-box.left{
+
+.penalty-box.left {
     left: 0;
     border-left: none;
 }
-.penalty-box.right{
+
+.penalty-box.right {
     right: 0;
     border-right: none;
 }
 
-.sixyard-area{
+.sixyard-area {
     position: absolute;
     top: 38%;
     width: 6%;
     height: 24%;
     border: 2px solid rgb(255, 255, 255);
 }
-.sixyard-area.left{
+
+.sixyard-area.left {
     left: 0;
     border-left: none;
 }
-.sixyard-area.right{
+
+.sixyard-area.right {
     right: 0;
     border-right: none;
 }
 
-.penalty-spot{
+.penalty-spot {
     position: absolute;
     top: 50%;
     width: 10px;
@@ -264,63 +284,82 @@ body{
     border-radius: 50%;
     transform: translateY(-50%);
 }
-.penalty-spot.left{
+
+.penalty-spot.left {
     left: 10%;
 }
-.penalty-spot.right{
+
+.penalty-spot.right {
     right: 10%;
 }
 
-.corner{
+.corner {
     position: absolute;
     width: 3%;
     aspect-ratio: 1;
     border: 2px solid rgb(255, 255, 255);
 }
-.corner.top-left{
+
+.corner.top-left {
     top: -1px;
     left: -1px;
     border-radius: 0 0 100% 0;
     border-top: none;
 }
-.corner.top-right{
+
+.corner.top-right {
     top: -1px;
     right: -1px;
     border-radius: 0 0 0 100%;
     border-top: none;
 }
-.corner.bottom-left{
+
+.corner.bottom-left {
     bottom: -1px;
     left: -1px;
     border-radius: 0 100% 0 0;
     border-bottom: none;
 }
-.corner.bottom-right{
+
+.corner.bottom-right {
     bottom: -1px;
     right: -1px;
     border-radius: 100% 0 0 0;
     border-bottom: none;
 }
-.tok{
+
+/* Tokens */
+.tok {
     position: absolute;
-    width: 30px; height: 30px;
+    width: 30px;
+    height: 30px;
     margin: -15px;
     border-radius: 50%;
     background: #2f6fed;
-    border: 1.5px solid rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
     color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
     font-family: monospace;
     cursor: grab;
     user-select: none;
     touch-action: none;
     z-index: 5;
 }
-.tok.gk{
+
+.tok.gk {
     background: #e0b040;
 }
 
+.tok.enemy {
+    background: #e74c3c;
+    border-color: #fff;
+}
+
+/* Role menu */
 .role-menu {
     position: fixed;
     z-index: 1000;
@@ -335,11 +374,11 @@ body{
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.role-menu.hidden{
+.role-menu.hidden {
     display: none;
 }
 
-.role-menu button{
+.role-menu button {
     background: #2c3e50;
     color: #ecf0f1;
     border: none;
@@ -352,7 +391,7 @@ body{
     transition: background 0.15s;
 }
 
-.role-menu button:hover{
+.role-menu button:hover {
     background: #1abc9c;
     color: #111;
 }
