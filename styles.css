@@ -5,6 +5,44 @@
     padding: 0;
 }
 
+.icon-btn {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* 2. Standardize SVG element dimensions */
+.icon-btn svg {
+  width: 24px !important;
+  height: 24px !important;
+  display: block;
+}
+
+/* 3. Override all inline path fills and strokes */
+.icon-btn svg path,
+.icon-btn svg circle,
+.icon-btn svg rect,
+.icon-btn svg line,
+.icon-btn svg polyline {
+  fill: #ffffff !important;
+  stroke: none !important;
+}
+
+/* 4. Fix outlined stroke-based icons (Rectangle, Arrow, Eraser, Trash) */
+.icon-btn[data-tool="rect"] svg path,
+.icon-btn[data-tool="arrow"] svg path,
+.icon-btn[data-tool="eraser"] svg path,
+.icon-btn#clear-drawings svg path {
+  fill: none !important;
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+}
+
 body {
     font-family: 'Inter', 'Segoe UI', sans-serif;
     background: #0f1419;
