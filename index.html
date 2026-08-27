@@ -9,9 +9,54 @@
 <body>
     <header>
         <h1>Touchline Board</h1>
-        <button id="open-formation-modal">Formation</button>
-        <button id="open-enemy-modal">Enemy Formation</button>
+        <div class="header-buttons">
+            <button id="open-formation-modal">Formation</button>
+            <button id="open-enemy-modal">Enemy</button>
+        </div>
     </header>
+
+    <div class="main-content">
+        <!-- Sidebar with drawing tools -->
+        <aside class="sidebar">
+            <button class="icon-btn active" data-tool="select" title="Select/Move"></button>
+            <button class="icon-btn" data-tool="line" title="Line"></button>
+            <button class="icon-btn" data-tool="rect" title="Rectangle"></button>
+            <button class="icon-btn" data-tool="arrow" title="Arrow"></button>
+            <button class="icon-btn" data-tool="eraser" title="Eraser"></button>
+            <button class="icon-btn" id="clear-drawings" title="Clear Drawings"></button>
+        </aside>
+
+        <!-- Pitch area -->
+        <div id="main-menu">
+            <div id="pitch" class="pitch">
+                <!-- Pitch markings -->
+                <div class="halfway-line"></div>
+                <div class="center-circle"></div>
+                <div class="center-spot"></div>
+                <div class="penalty-box left"></div>
+                <div class="penalty-arc left"></div>
+                <div class="penalty-spot left"></div>
+                <div class="sixyard-area left"></div>
+                <div class="penalty-box right"></div>
+                <div class="penalty-arc right"></div>
+                <div class="penalty-spot right"></div>
+                <div class="sixyard-area right"></div>
+                <div class="corner top-left"></div>
+                <div class="corner top-right"></div>
+                <div class="corner bottom-left"></div>
+                <div class="corner bottom-right"></div>
+
+                <!-- SVG overlay for drawings -->
+                <svg id="draw-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
+                            <polygon points="0,0 4,2 0,4" fill="#fbbf24" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </div>
 
     <!-- Your Formation Modal -->
     <div id="formation-modal" class="modal-overlay hidden">
@@ -20,9 +65,7 @@
                 <h2>Choose Formation</h2>
                 <button id="close-formation-modal" class="close-btn">&times;</button>
             </div>
-            <div class="formation-grid" id="formation-grid">
-                <!-- Your formation buttons injected by JS -->
-            </div>
+            <div class="formation-grid" id="formation-grid"></div>
         </div>
     </div>
 
@@ -33,40 +76,14 @@
                 <h2>Enemy Formation</h2>
                 <button id="close-enemy-modal" class="close-btn">&times;</button>
             </div>
-
-            <!-- Man Marking Toggle Button -->
-            <button id="man-marking-toggle" class="man-marking-btn">Man‑to‑man marking: OFF</button>
-
-            <div class="formation-grid" id="enemy-formation-grid">
-                <!-- Enemy formation buttons injected by JS -->
-            </div>
-        </div>
-    </div>
-
-    <div id="main-menu">
-        <div id="pitch" class="pitch">
-            <!-- center -->
-            <div class="halfway-line"></div>
-            <div class="center-circle"></div>
-            <div class="center-spot"></div>
-            <!-- left area -->
-            <div class="penalty-box left"></div>
-            <div class="penalty-arc left"></div>
-            <div class="penalty-spot left"></div>
-            <div class="sixyard-area left"></div>
-            <!-- right area -->
-            <div class="penalty-box right"></div>
-            <div class="penalty-arc right"></div>
-            <div class="penalty-spot right"></div>
-            <div class="sixyard-area right"></div>
-            <!-- corners -->
-            <div class="corner top-left"></div>
-            <div class="corner top-right"></div>
-            <div class="corner bottom-left"></div>
-            <div class="corner bottom-right"></div>
+            <button id="man-marking-toggle" class="man-marking-btn">Man-to-man marking: OFF</button>
+            <div class="formation-grid" id="enemy-formation-grid"></div>
         </div>
     </div>
 
     <script src="script.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.js"></script>
+
 </body>
 </html>

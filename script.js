@@ -1,5 +1,6 @@
 const pitch = document.getElementById('pitch');
 
+// ---------- ROLE DATA ----------
 const roleCategories = {
   GK: ['GK','SK','BGK'],
   CB: ['CB','BPD','WCD','ACB'],
@@ -16,8 +17,8 @@ Object.entries(roleCategories).forEach(([category, roles]) => {
   roles.forEach(role => roleToCategory[role] = category);
 });
 
+// ---------- FORMATIONS ----------
 const formations = {
-  // 4-defender
   f442: [
     [5, 50, 'GK'],
     [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
@@ -65,7 +66,6 @@ const formations = {
     [50, 60, 'CM'], [50, 40, 'CM'],
     [82, 88, 'W'], [85, 62, 'CF'], [85, 38, 'CF'], [82, 12, 'W']
   ],
-  // 3-defender
   f352: [
     [5, 50, 'GK'],
     [22, 68, 'CB'], [20, 50, 'CB'], [22, 32, 'CB'],
@@ -85,7 +85,6 @@ const formations = {
     [68, 88, 'W'], [66, 62, 'AM'], [66, 38, 'AM'], [68, 12, 'W'],
     [88, 50, 'CF']
   ],
-  // 5-defender
   f532: [
     [5, 50, 'GK'],
     [28, 88, 'WB'], [22, 68, 'CB'], [20, 50, 'CB'], [22, 32, 'CB'], [28, 12, 'WB'],
@@ -117,6 +116,7 @@ function openRoleMenu(token, clientX, clientY) {
     console.warn(`No category found for role: ${currentRole}`);
     return;
   }
+
   roleMenu.innerHTML = '';
   roleCategories[category].forEach(role => {
     const btn = document.createElement('button');
@@ -129,9 +129,36 @@ function openRoleMenu(token, clientX, clientY) {
     });
     roleMenu.appendChild(btn);
   });
+
+  // Show menu temporarily to measure its size
+  roleMenu.classList.remove('hidden');
+  roleMenu.style.visibility = 'hidden';
   roleMenu.style.left = `${clientX + 10}px`;
   roleMenu.style.top = `${clientY + 10}px`;
-  roleMenu.classList.remove('hidden');
+
+  const menuRect = roleMenu.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  let left = clientX + 10;
+  let top = clientY + 10;
+
+  // Flip horizontally if needed
+  if (left + menuRect.width > viewportWidth) {
+    left = clientX - menuRect.width - 10;
+  }
+  // Flip vertically if needed
+  if (top + menuRect.height > viewportHeight) {
+    top = clientY - menuRect.height - 10;
+  }
+
+  // Keep within boundaries
+  left = Math.max(5, Math.min(left, viewportWidth - menuRect.width - 5));
+  top = Math.max(5, Math.min(top, viewportHeight - menuRect.height - 5));
+
+  roleMenu.style.left = `${left}px`;
+  roleMenu.style.top = `${top}px`;
+  roleMenu.style.visibility = 'visible';
   activeToken = token;
 }
 
@@ -157,7 +184,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// ---------- RENDER OWN TEAM ----------
+// ---------- RENDER FUNCTIONS ----------
 function renderFormation() {
   pitch.querySelectorAll('.tok.own').forEach(token => token.remove());
   formations[activeFormation].forEach((player, index) => {
@@ -175,20 +202,17 @@ function renderFormation() {
   });
 }
 
-// ---------- RENDER ENEMY TEAM ----------
 function renderEnemy() {
   pitch.querySelectorAll('.tok.enemy').forEach(token => token.remove());
 
   let enemyData;
   if (enemyManMarking) {
-    // Mirror own players' current positions
     enemyData = Array.from(pitch.querySelectorAll('.tok.own')).map(token => {
       const x = parseFloat(token.style.left);
       const y = parseFloat(token.style.top);
       return [Math.min(98, 100 - x), Math.min(98, y + 1), token.dataset.role];
     });
   } else {
-    // Use selected enemy formation, mirror horizontally
     const base = formations[activeEnemyFormation];
     enemyData = base.map(([x, y, role]) => [100 - x, y, role]);
   }
@@ -202,18 +226,21 @@ function renderEnemy() {
     token.style.left = `${x}%`;
     token.style.top = `${y}%`;
     token.setAttribute('aria-label', `Enemy ${role}`);
-    makeDraggable(token, -1); // enemy tokens draggable too
+    makeDraggable(token, -1);
     pitch.appendChild(token);
   });
 }
 
-// ---------- DRAG & CLICK ----------
+// ---------- DRAG & CLICK (with drawing tool check) ----------
+let currentTool = 'select'; // 'select', 'line', 'rect', 'arrow', 'eraser'
+
 function makeDraggable(token, index) {
   let dragging = false;
   let moved = false;
   let startX = 0, startY = 0;
 
   token.addEventListener('pointerdown', event => {
+    if (currentTool !== 'select') return; // disable dragging when drawing
     dragging = true;
     moved = false;
     startX = event.clientX;
@@ -237,13 +264,15 @@ function makeDraggable(token, index) {
   });
 
   token.addEventListener('pointerup', () => {
+    if (!dragging) return;
     dragging = false;
     if (enemyManMarking && token.classList.contains('own')) {
-      renderEnemy(); // update enemy positions after own player moves
+      renderEnemy();
     }
   });
 
   token.addEventListener('click', (e) => {
+    if (currentTool !== 'select') return; // ignore clicks when drawing
     if (moved) {
       moved = false;
       return;
@@ -251,6 +280,149 @@ function makeDraggable(token, index) {
     openRoleMenu(token, e.clientX, e.clientY);
   });
 }
+
+// ---------- DRAWING LOGIC ----------
+const drawOverlay = document.getElementById('draw-overlay');
+let drawings = [];
+let tempShape = null;
+let drawingStart = null;
+
+function createShapeElement(type, x1, y1, x2, y2) {
+  let el;
+  switch (type) {
+    case 'line':
+      el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      el.setAttribute('stroke', '#ffffff');
+      el.setAttribute('stroke-width', '0.5');
+      el.setAttribute('vector-effect', 'non-scaling-stroke');
+      break;
+    case 'rect':
+      el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      el.setAttribute('fill', 'rgba(255,255,255,0.2)');
+      el.setAttribute('stroke', '#ffffff');
+      el.setAttribute('stroke-width', '0.5');
+      el.setAttribute('vector-effect', 'non-scaling-stroke');
+      break;
+    case 'arrow':
+      el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      el.setAttribute('stroke', '#fbbf24');
+      el.setAttribute('stroke-width', '0.5');
+      el.setAttribute('vector-effect', 'non-scaling-stroke');
+      el.setAttribute('marker-end', 'url(#arrowhead)');
+      break;
+  }
+  updateShapeElement(el, type, x1, y1, x2, y2);
+  return el;
+}
+
+function updateShapeElement(el, type, x1, y1, x2, y2) {
+  if (type === 'line' || type === 'arrow') {
+    el.setAttribute('x1', x1);
+    el.setAttribute('y1', y1);
+    el.setAttribute('x2', x2);
+    el.setAttribute('y2', y2);
+  } else if (type === 'rect') {
+    el.setAttribute('x', Math.min(x1, x2));
+    el.setAttribute('y', Math.min(y1, y2));
+    el.setAttribute('width', Math.abs(x2 - x1));
+    el.setAttribute('height', Math.abs(y2 - y1));
+  }
+}
+
+function eraseShapeAt(x, y) {
+  for (let i = drawings.length - 1; i >= 0; i--) {
+    const d = drawings[i];
+    if (isPointOnShape(x, y, d)) {
+      d.element.remove();
+      drawings.splice(i, 1);
+      break;
+    }
+  }
+}
+
+function isPointOnShape(x, y, drawing) {
+  const { start, end, type } = drawing;
+  if (type === 'rect') {
+    const rx = Math.min(start.x, end.x);
+    const ry = Math.min(start.y, end.y);
+    const rw = Math.abs(end.x - start.x);
+    const rh = Math.abs(end.y - start.y);
+    return x >= rx && x <= rx + rw && y >= ry && y <= ry + rh;
+  } else {
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const lengthSq = dx*dx + dy*dy;
+    if (lengthSq === 0) return Math.hypot(x - start.x, y - start.y) < 1;
+    let t = ((x - start.x)*dx + (y - start.y)*dy) / lengthSq;
+    t = Math.max(0, Math.min(1, t));
+    const projX = start.x + t*dx;
+    const projY = start.y + t*dy;
+    return Math.hypot(x - projX, y - projY) < 1;
+  }
+}
+
+// Tool selection – sidebar buttons
+document.querySelectorAll('.sidebar [data-tool]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar [data-tool]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTool = btn.dataset.tool;
+    if (currentTool === 'select') {
+      drawOverlay.classList.remove('active');
+    } else {
+      drawOverlay.classList.add('active');
+    }
+  });
+});
+
+// Clear drawings
+document.getElementById('clear-drawings').addEventListener('click', () => {
+  drawings.forEach(d => d.element.remove());
+  drawings = [];
+});
+
+// Drawing interactions
+drawOverlay.addEventListener('pointerdown', (e) => {
+  if (currentTool === 'select') return;
+  e.preventDefault();
+  const rect = pitch.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  drawingStart = { x, y };
+
+  if (currentTool === 'eraser') {
+    eraseShapeAt(x, y);
+    return;
+  }
+
+  tempShape = createShapeElement(currentTool, x, y, x, y);
+  drawOverlay.appendChild(tempShape);
+});
+
+drawOverlay.addEventListener('pointermove', (e) => {
+  if (!drawingStart || !tempShape) return;
+  const rect = pitch.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  updateShapeElement(tempShape, currentTool, drawingStart.x, drawingStart.y, x, y);
+});
+
+drawOverlay.addEventListener('pointerup', (e) => {
+  if (!drawingStart) return;
+  const rect = pitch.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  if (tempShape) {
+    drawings.push({
+      type: currentTool,
+      start: drawingStart,
+      end: { x, y },
+      element: tempShape
+    });
+  }
+  tempShape = null;
+  drawingStart = null;
+});
 
 // ---------- OWN FORMATION MODAL ----------
 const formationModal = document.getElementById('formation-modal');
