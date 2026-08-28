@@ -1,4 +1,55 @@
 const pitch = document.getElementById('pitch');
+const zoomContainer = document.getElementById('pitch-zoom-container');
+
+// ---------- ZOOM SYSTEM ----------
+let currentZoom = 1;
+const minZoom = 0.6;
+const maxZoom = 1.6;
+const zoomStep = 0.15;
+
+document.getElementById('zoom-in').addEventListener('click', () => {
+  if (currentZoom < maxZoom) {
+    currentZoom += zoomStep;
+    zoomContainer.style.transform = `scale(${currentZoom})`;
+  }
+});
+
+document.getElementById('zoom-out').addEventListener('click', () => {
+  if (currentZoom > minZoom) {
+    currentZoom -= zoomStep;
+    zoomContainer.style.transform = `scale(${currentZoom})`;
+  }
+});
+
+// ---------- ZONE SYSTEM (DYNAMIC JS RENDER) ----------
+const zonesData = [
+  1, 4, 7, 10, 13, 16,
+  2, 5, 8, 11, 14, 17,
+  3, 6, 9, 12, 15, 18
+];
+
+function initZones() {
+  const container = document.getElementById('pitch-zones');
+  container.innerHTML = '';
+
+  zonesData.forEach(num => {
+    const div = document.createElement('div');
+    div.className = `zone ${num === 14 ? 'zone-14' : ''}`;
+    div.textContent = num;
+    div.dataset.zone = num;
+    container.appendChild(div);
+  });
+}
+
+const toggleZonesBtn = document.getElementById('toggle-zones-btn');
+const zonesOverlay = document.getElementById('pitch-zones');
+
+toggleZonesBtn.addEventListener('click', () => {
+  zonesOverlay.classList.toggle('hidden');
+  toggleZonesBtn.classList.toggle('active');
+});
+
+
 
 // ---------- ROLE DATA ----------
 const roleCategories = {
@@ -9,7 +60,7 @@ const roleCategories = {
   CM: ['CM', 'WCM', 'MP', 'WM'],
   AM: ['AM','AP','FR','SS','CHM'],
   W:  ['W','IF','IW','WF','PW'],
-  CF: ['CF', 'CHF','DLF','F9','P','TF']
+  CF: ['CF', 'ST', 'CHF','DLF','F9','P','TF']
 };
 
 const roleToCategory = {};
@@ -17,105 +68,102 @@ Object.entries(roleCategories).forEach(([category, roles]) => {
   roles.forEach(role => roleToCategory[role] = category);
 });
 
-// ---------- FORMATIONS ----------
+// ---------- FORMATIONS & LABELS ----------
+const formationNames = {
+  f442: '4-4-2',
+  f442d: '4-4-2 Diamond',
+  f433: '4-3-3',
+  f4231: '4-2-3-1',
+  f4141: '4-1-4-1',
+  f352: '3-5-2',
+  f343: '3-4-3',
+  f532: '5-3-2',
+  f541: '5-4-1',
+  f523: '5-2-3'
+};
+
 const formations = {
+  // 4-BACK FORMATIONS
   f442: [
-    [5, 50, 'GK'],
-    [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
-    [55, 85, 'W'], [50, 60, 'CM'], [50, 40, 'CM'], [55, 15, 'W'],
-    [80, 60, 'CF'], [80, 40, 'CF']
+    [6, 50, 'GK', 'Player 1'],
+    [24, 85, 'WB', 'Player 2'], [20, 62, 'CB', 'Player 3'], [20, 38, 'CB', 'Player 4'], [24, 15, 'WB', 'Player 5'],
+    [58, 85, 'W', 'Player 6'], [50, 60, 'CM', 'Player 7'], [50, 40, 'CM', 'Player 8'], [58, 15, 'W', 'Player 9'],
+    [78, 50, 'ST', 'Player 10'], [78, 30, 'CF', 'Player 11']
+  ],
+  f442d: [
+    [6, 50, 'GK', 'Player 1'],
+    [24, 85, 'WB', 'Player 2'], [20, 62, 'CB', 'Player 3'], [20, 38, 'CB', 'Player 4'], [24, 15, 'WB', 'Player 5'],
+    [40, 50, 'DM', 'Player 6'], [54, 70, 'CM', 'Player 7'], [54, 30, 'CM', 'Player 8'], [68, 50, 'AM', 'Player 9'],
+    [80, 60, 'ST', 'Player 10'], [80, 40, 'CF', 'Player 11']
   ],
   f433: [
-    [5, 50, 'GK'],
-    [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
-    [45, 50, 'DM'], [55, 65, 'CM'], [55, 35, 'CM'],
-    [82, 85, 'W'], [85, 50, 'CF'], [82, 15, 'W']
+    [6, 50, 'GK', 'Player 1'],
+    [24, 85, 'WB', 'Player 2'], [20, 62, 'CB', 'Player 3'], [20, 38, 'CB', 'Player 4'], [24, 15, 'WB', 'Player 5'],
+    [42, 50, 'DM', 'Player 6'], [55, 65, 'CM', 'Player 7'], [55, 35, 'CM', 'Player 8'],
+    [78, 85, 'W', 'Player 9'], [82, 50, 'ST', 'Player 10'], [78, 15, 'W', 'Player 11']
   ],
   f4231: [
-    [5, 50, 'GK'],
-    [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
-    [48, 62, 'DM'], [48, 38, 'DM'],
-    [70, 80, 'W'], [68, 50, 'AM'], [70, 20, 'W'],
-    [88, 50, 'CF']
+    [6, 50, 'GK', 'Player 1'],
+    [24, 85, 'WB', 'Player 2'], [20, 62, 'CB', 'Player 3'], [20, 38, 'CB', 'Player 4'], [24, 15, 'WB', 'Player 5'],
+    [45, 62, 'CM', 'Player 6'], [45, 38, 'CM', 'Player 7'],
+    [70, 80, 'W', 'Player 8'], [68, 50, 'AM', 'Player 9'], [70, 20, 'W', 'Player 10'],
+    [84, 50, 'ST', 'Player 11']
   ],
   f4141: [
-    [5, 50, 'GK'],
-    [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
-    [45, 50, 'DM'],
-    [65, 85, 'W'], [62, 62, 'CM'], [62, 38, 'CM'], [65, 15, 'W'],
-    [85, 50, 'CF']
+    [6, 50, 'GK', 'Player 1'],
+    [24, 85, 'WB', 'Player 2'], [20, 62, 'CB', 'Player 3'], [20, 38, 'CB', 'Player 4'], [24, 15, 'WB', 'Player 5'],
+    [40, 50, 'DM', 'Player 6'],
+    [60, 85, 'W', 'Player 7'], [58, 62, 'CM', 'Player 8'], [58, 38, 'CM', 'Player 9'], [60, 15, 'W', 'Player 10'],
+    [82, 50, 'ST', 'Player 11']
   ],
-  f442d: [ // diamond narrow
-    [5, 50, 'GK'],
-    [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
-    [45, 50, 'DM'],
-    [58, 68, 'CM'], [58, 32, 'CM'],
-    [70, 50, 'AM'],
-    [88, 60, 'CF'], [88, 40, 'CF']
-  ],
-  f4411: [
-    [5, 50, 'GK'],
-    [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
-    [55, 85, 'W'], [50, 60, 'CM'], [50, 40, 'CM'], [55, 15, 'W'],
-    [72, 50, 'CF'],
-    [88, 50, 'CF']
-  ],
-  f424: [
-    [5, 50, 'GK'],
-    [25, 85, 'FB'], [22, 60, 'CB'], [22, 40, 'CB'], [25, 15, 'FB'],
-    [50, 60, 'CM'], [50, 40, 'CM'],
-    [82, 88, 'W'], [85, 62, 'CF'], [85, 38, 'CF'], [82, 12, 'W']
-  ],
+
+  // 3-BACK FORMATIONS
   f352: [
-    [5, 50, 'GK'],
-    [22, 68, 'CB'], [20, 50, 'CB'], [22, 32, 'CB'],
-    [48, 88, 'WB'], [50, 65, 'CM'], [45, 50, 'DM'], [50, 35, 'CM'], [48, 12, 'WB'],
-    [82, 60, 'CF'], [82, 40, 'CF']
+    [6, 50, 'GK', 'Player 1'],
+    [20, 72, 'CB', 'Player 2'], [18, 50, 'CB', 'Player 3'], [20, 28, 'CB', 'Player 4'],
+    [45, 88, 'WB', 'Player 5'], [50, 65, 'CM', 'Player 6'], [42, 50, 'DM', 'Player 7'], [50, 35, 'CM', 'Player 8'], [45, 12, 'WB', 'Player 9'],
+    [78, 60, 'ST', 'Player 10'], [78, 40, 'CF', 'Player 11']
   ],
   f343: [
-    [5, 50, 'GK'],
-    [22, 68, 'CB'], [20, 50, 'CB'], [22, 32, 'CB'],
-    [50, 88, 'WB'], [52, 62, 'CM'], [52, 38, 'CM'], [50, 12, 'WB'],
-    [82, 80, 'W'], [85, 50, 'CF'], [82, 20, 'W']
+    [6, 50, 'GK', 'Player 1'],
+    [20, 72, 'CB', 'Player 2'], [18, 50, 'CB', 'Player 3'], [20, 28, 'CB', 'Player 4'],
+    [48, 88, 'WB', 'Player 5'], [48, 60, 'CM', 'Player 6'], [48, 40, 'CM', 'Player 7'], [48, 12, 'WB', 'Player 8'],
+    [78, 82, 'W', 'Player 9'], [82, 50, 'ST', 'Player 10'], [78, 18, 'W', 'Player 11']
   ],
-  f3241: [
-    [5, 50, 'GK'],
-    [22, 68, 'CB'], [20, 50, 'CB'], [22, 32, 'CB'],
-    [46, 62, 'DM'], [46, 38, 'DM'],
-    [68, 88, 'W'], [66, 62, 'AM'], [66, 38, 'AM'], [68, 12, 'W'],
-    [88, 50, 'CF']
-  ],
+
+  // 5-BACK FORMATIONS
   f532: [
-    [5, 50, 'GK'],
-    [28, 88, 'WB'], [22, 68, 'CB'], [20, 50, 'CB'], [22, 32, 'CB'], [28, 12, 'WB'],
-    [52, 65, 'CM'], [48, 50, 'DM'], [52, 35, 'CM'],
-    [82, 60, 'CF'], [82, 40, 'CF']
+    [6, 50, 'GK', 'Player 1'],
+    [24, 88, 'WB', 'Player 2'], [20, 68, 'CB', 'Player 3'], [18, 50, 'CB', 'Player 4'], [20, 32, 'CB', 'Player 5'], [24, 12, 'WB', 'Player 6'],
+    [48, 65, 'CM', 'Player 7'], [42, 50, 'DM', 'Player 8'], [48, 35, 'CM', 'Player 9'],
+    [78, 60, 'ST', 'Player 10'], [78, 40, 'CF', 'Player 11']
   ],
   f541: [
-    [5, 50, 'GK'],
-    [28, 88, 'WB'], [22, 68, 'CB'], [20, 50, 'CB'], [22, 32, 'CB'], [28, 12, 'WB'],
-    [56, 82, 'W'], [52, 62, 'CM'], [52, 38, 'CM'], [56, 18, 'W'],
-    [85, 50, 'CF']
+    [6, 50, 'GK', 'Player 1'],
+    [24, 88, 'WB', 'Player 2'], [20, 68, 'CB', 'Player 3'], [18, 50, 'CB', 'Player 4'], [20, 32, 'CB', 'Player 5'], [24, 12, 'WB', 'Player 6'],
+    [54, 82, 'W', 'Player 7'], [50, 62, 'CM', 'Player 8'], [50, 38, 'CM', 'Player 9'], [54, 18, 'W', 'Player 10'],
+    [80, 50, 'ST', 'Player 11']
+  ],
+  f523: [
+    [6, 50, 'GK', 'Player 1'],
+    [24, 88, 'WB', 'Player 2'], [20, 68, 'CB', 'Player 3'], [18, 50, 'CB', 'Player 4'], [20, 32, 'CB', 'Player 5'], [24, 12, 'WB', 'Player 6'],
+    [48, 62, 'CM', 'Player 7'], [48, 38, 'CM', 'Player 8'],
+    [76, 82, 'W', 'Player 9'], [82, 50, 'ST', 'Player 10'], [76, 18, 'W', 'Player 11']
   ]
 };
 
-let activeFormation = 'f4231';
-let activeEnemyFormation = 'f433';
-let enemyManMarking = false;
+let activeFormation = true;
+let activeEnemyFormation = true;
 
 // ---------- ROLE MENU ----------
 const roleMenu = document.createElement('div');
 roleMenu.className = 'role-menu hidden';
 document.body.appendChild(roleMenu);
-let activeToken = null;
 
 function openRoleMenu(token, clientX, clientY) {
   const currentRole = token.dataset.role;
   const category = roleToCategory[currentRole];
-  if (!category) {
-    console.warn(`No category found for role: ${currentRole}`);
-    return;
-  }
+  if (!category) return;
 
   roleMenu.innerHTML = '';
   roleCategories[category].forEach(role => {
@@ -130,117 +178,135 @@ function openRoleMenu(token, clientX, clientY) {
     roleMenu.appendChild(btn);
   });
 
-  // Show menu temporarily to measure its size
   roleMenu.classList.remove('hidden');
-  roleMenu.style.visibility = 'hidden';
-  roleMenu.style.left = `${clientX + 10}px`;
-  roleMenu.style.top = `${clientY + 10}px`;
-
-  const menuRect = roleMenu.getBoundingClientRect();
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-
-  let left = clientX + 10;
-  let top = clientY + 10;
-
-  // Flip horizontally if needed
-  if (left + menuRect.width > viewportWidth) {
-    left = clientX - menuRect.width - 10;
-  }
-  // Flip vertically if needed
-  if (top + menuRect.height > viewportHeight) {
-    top = clientY - menuRect.height - 10;
-  }
-
-  // Keep within boundaries
-  left = Math.max(5, Math.min(left, viewportWidth - menuRect.width - 5));
-  top = Math.max(5, Math.min(top, viewportHeight - menuRect.height - 5));
-
-  roleMenu.style.left = `${left}px`;
-  roleMenu.style.top = `${top}px`;
-  roleMenu.style.visibility = 'visible';
-  activeToken = token;
+  roleMenu.style.left = `${Math.min(clientX, window.innerWidth - 160)}px`;
+  roleMenu.style.top = `${Math.min(clientY, window.innerHeight - 120)}px`;
 }
 
 function closeRoleMenu() {
   roleMenu.classList.add('hidden');
-  activeToken = null;
 }
 
 function setTokenRole(token, role) {
   token.dataset.role = role;
-  token.textContent = role;
-  if (role === 'GK') token.classList.add('gk');
-  else token.classList.remove('gk');
-  const index = Array.from(pitch.querySelectorAll('.tok.own')).indexOf(token);
-  token.setAttribute('aria-label', `Player ${index + 1}, Role: ${role}`);
+  const circle = token.querySelector('.tok-circle');
+  if (circle) circle.textContent = role;
 }
 
 document.addEventListener('click', (e) => {
-  if (!roleMenu.classList.contains('hidden') &&
-      !roleMenu.contains(e.target) &&
-      !e.target.closest('.tok')) {
+  if (!roleMenu.classList.contains('hidden') && !roleMenu.contains(e.target) && !e.target.closest('.tok')) {
     closeRoleMenu();
   }
 });
+
+// ---------- INLINE EDIT PLAYER NAME FEATURE ----------
+function enableNameEditing(label, playerIndex) {
+  label.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    const currentName = label.textContent;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentName;
+    input.className = 'tok-name-input';
+
+    label.replaceWith(input);
+    
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 10);
+
+    const saveName = () => {
+      const newName = input.value.trim() || currentName;
+      label.textContent = newName;
+      if (input.parentNode) {
+        input.replaceWith(label);
+      }
+      if (formations[activeFormation] && formations[activeFormation][playerIndex]) {
+        formations[activeFormation][playerIndex][3] = newName;
+      }
+    };
+
+    input.addEventListener('blur', saveName);
+    input.addEventListener('keydown', (evt) => {
+      if (evt.key === 'Enter') saveName();
+      if (evt.key === 'Escape') {
+        if (input.parentNode) input.replaceWith(label);
+      }
+    });
+  });
+}
 
 // ---------- RENDER FUNCTIONS ----------
 function renderFormation() {
   pitch.querySelectorAll('.tok.own').forEach(token => token.remove());
   formations[activeFormation].forEach((player, index) => {
-    const [x, y, role] = player;
+    const [x, y, role, name] = player;
     const token = document.createElement('div');
     token.className = 'tok own';
-    if (role === 'GK') token.classList.add('gk');
     token.dataset.role = role;
-    token.textContent = role;
     token.style.left = `${x}%`;
     token.style.top = `${y}%`;
-    token.setAttribute('aria-label', `Player ${index + 1}, Role: ${role}`);
-    makeDraggable(token, index);
+
+    const circle = document.createElement('div');
+    circle.className = 'tok-circle';
+    circle.textContent = role;
+
+    const label = document.createElement('div');
+    label.className = 'tok-name';
+    label.textContent = name || `Player ${index + 1}`;
+    enableNameEditing(label, index);
+
+    token.appendChild(circle);
+    token.appendChild(label);
+
+    makeDraggable(token);
     pitch.appendChild(token);
   });
+
+  document.getElementById('home-formation-label').textContent = formationNames[activeFormation] || activeFormation.toUpperCase();
 }
 
 function renderEnemy() {
   pitch.querySelectorAll('.tok.enemy').forEach(token => token.remove());
+  const base = formations[activeEnemyFormation];
 
-  let enemyData;
-  if (enemyManMarking) {
-    enemyData = Array.from(pitch.querySelectorAll('.tok.own')).map(token => {
-      const x = parseFloat(token.style.left);
-      const y = parseFloat(token.style.top);
-      return [Math.min(98, 100 - x), Math.min(98, y + 1), token.dataset.role];
-    });
-  } else {
-    const base = formations[activeEnemyFormation];
-    enemyData = base.map(([x, y, role]) => [100 - x, y, role]);
-  }
-
-  enemyData.forEach(([x, y, role]) => {
+  base.forEach(([x, y, role]) => {
     const token = document.createElement('div');
     token.className = 'tok enemy';
-    if (role === 'GK') token.classList.add('gk');
     token.dataset.role = role;
-    token.textContent = role;
-    token.style.left = `${x}%`;
+    token.style.left = `${100 - x}%`;
     token.style.top = `${y}%`;
-    token.setAttribute('aria-label', `Enemy ${role}`);
-    makeDraggable(token, -1);
+
+    const circle = document.createElement('div');
+    circle.className = 'tok-circle';
+    token.appendChild(circle);
+
+    makeDraggable(token);
     pitch.appendChild(token);
   });
+
+  document.getElementById('away-formation-label').textContent = formationNames[activeEnemyFormation] || activeEnemyFormation.toUpperCase();
 }
 
-// ---------- DRAG & CLICK (with drawing tool check) ----------
-let currentTool = 'select'; // 'select', 'line', 'rect', 'arrow', 'eraser'
+// ---------- DRAGGABLE SYSTEM ----------
+let currentTool = 'select';
 
-function makeDraggable(token, index) {
+function makeDraggable(token) {
   let dragging = false;
   let moved = false;
   let startX = 0, startY = 0;
 
   token.addEventListener('pointerdown', event => {
-    if (currentTool !== 'select') return; // disable dragging when drawing
+    if (
+      currentTool !== 'select' || 
+      event.target.classList.contains('tok-name') || 
+      event.target.tagName === 'INPUT'
+    ) {
+      return;
+    }
+
     dragging = true;
     moved = false;
     startX = event.clientX;
@@ -258,23 +324,23 @@ function makeDraggable(token, index) {
       const rect = pitch.getBoundingClientRect();
       const x = ((event.clientX - rect.left) / rect.width) * 100;
       const y = ((event.clientY - rect.top) / rect.height) * 100;
-      token.style.left = `${Math.max(0, Math.min(100, x))}%`;
-      token.style.top = `${Math.max(0, Math.min(100, y))}%`;
+      token.style.left = `${Math.max(2, Math.min(98, x))}%`;
+      token.style.top = `${Math.max(2, Math.min(98, y))}%`;
     }
   });
 
   token.addEventListener('pointerup', () => {
-    if (!dragging) return;
     dragging = false;
-    if (enemyManMarking && token.classList.contains('own')) {
-      renderEnemy();
-    }
   });
 
   token.addEventListener('click', (e) => {
-    if (currentTool !== 'select') return; // ignore clicks when drawing
-    if (moved) {
-      moved = false;
+    if (
+      currentTool !== 'select' || 
+      moved || 
+      !token.classList.contains('own') || 
+      e.target.classList.contains('tok-name') || 
+      e.target.tagName === 'INPUT'
+    ) {
       return;
     }
     openRoleMenu(token, e.clientX, e.clientY);
@@ -286,19 +352,42 @@ const drawOverlay = document.getElementById('draw-overlay');
 let drawings = [];
 let tempShape = null;
 let drawingStart = null;
+let activePassPoints = [];
+
+function getSnapPoint(x, y) {
+  const tokens = pitch.querySelectorAll('.tok');
+  let closest = null;
+  let minDist = 5;
+
+  tokens.forEach(tok => {
+    const tx = parseFloat(tok.style.left);
+    const ty = parseFloat(tok.style.top);
+    const dist = Math.hypot(x - tx, y - ty);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = { x: tx, y: ty };
+    }
+  });
+
+  return closest || { x, y };
+}
 
 function createShapeElement(type, x1, y1, x2, y2) {
   let el;
   switch (type) {
     case 'line':
-      el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      el.setAttribute('stroke', '#ffffff');
-      el.setAttribute('stroke-width', '0.5');
+    case 'pass-chain':
+      el = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      el.setAttribute('fill', 'rgba(251, 191, 36, 0.15)');
+      el.setAttribute('stroke', '#fbbf24');
+      el.setAttribute('stroke-width', '0.6');
+      el.setAttribute('stroke-dasharray', '2,2');
+      el.setAttribute('stroke-linejoin', 'round');
       el.setAttribute('vector-effect', 'non-scaling-stroke');
       break;
     case 'rect':
       el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      el.setAttribute('fill', 'rgba(255,255,255,0.2)');
+      el.setAttribute('fill', 'rgba(255,255,255,0.15)');
       el.setAttribute('stroke', '#ffffff');
       el.setAttribute('stroke-width', '0.5');
       el.setAttribute('vector-effect', 'non-scaling-stroke');
@@ -306,7 +395,8 @@ function createShapeElement(type, x1, y1, x2, y2) {
     case 'arrow':
       el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       el.setAttribute('stroke', '#fbbf24');
-      el.setAttribute('stroke-width', '0.5');
+      el.setAttribute('stroke-width', '0.8');
+      el.setAttribute('stroke-dasharray', '3,3');
       el.setAttribute('vector-effect', 'non-scaling-stroke');
       el.setAttribute('marker-end', 'url(#arrowhead)');
       break;
@@ -315,8 +405,14 @@ function createShapeElement(type, x1, y1, x2, y2) {
   return el;
 }
 
-function updateShapeElement(el, type, x1, y1, x2, y2) {
-  if (type === 'line' || type === 'arrow') {
+function updateShapeElement(el, type, x1, y1, x2, y2, passPoints = []) {
+  if (type === 'line' || type === 'pass-chain') {
+    if (passPoints.length > 0) {
+      el.setAttribute('points', passPoints.map(p => `${p.x},${p.y}`).join(' '));
+    } else {
+      el.setAttribute('points', `${x1},${y1} ${x2},${y2}`);
+    }
+  } else if (type === 'arrow') {
     el.setAttribute('x1', x1);
     el.setAttribute('y1', y1);
     el.setAttribute('x2', x2);
@@ -329,241 +425,130 @@ function updateShapeElement(el, type, x1, y1, x2, y2) {
   }
 }
 
-function eraseShapeAt(x, y) {
-  for (let i = drawings.length - 1; i >= 0; i--) {
-    const d = drawings[i];
-    if (isPointOnShape(x, y, d)) {
-      d.element.remove();
-      drawings.splice(i, 1);
-      break;
-    }
-  }
-}
-
-function isPointOnShape(x, y, drawing) {
-  const { start, end, type } = drawing;
-  if (type === 'rect') {
-    const rx = Math.min(start.x, end.x);
-    const ry = Math.min(start.y, end.y);
-    const rw = Math.abs(end.x - start.x);
-    const rh = Math.abs(end.y - start.y);
-    return x >= rx && x <= rx + rw && y >= ry && y <= ry + rh;
-  } else {
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-    const lengthSq = dx*dx + dy*dy;
-    if (lengthSq === 0) return Math.hypot(x - start.x, y - start.y) < 1;
-    let t = ((x - start.x)*dx + (y - start.y)*dy) / lengthSq;
-    t = Math.max(0, Math.min(1, t));
-    const projX = start.x + t*dx;
-    const projY = start.y + t*dy;
-    return Math.hypot(x - projX, y - projY) < 1;
-  }
-}
-
-// Tool selection – sidebar buttons
 document.querySelectorAll('.sidebar [data-tool]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.sidebar [data-tool]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentTool = btn.dataset.tool;
-    if (currentTool === 'select') {
-      drawOverlay.classList.remove('active');
-    } else {
-      drawOverlay.classList.add('active');
-    }
+    if (currentTool === 'select') drawOverlay.classList.remove('active');
+    else drawOverlay.classList.add('active');
   });
 });
 
-// Clear drawings
 document.getElementById('clear-drawings').addEventListener('click', () => {
   drawings.forEach(d => d.element.remove());
   drawings = [];
 });
 
-// Drawing interactions
 drawOverlay.addEventListener('pointerdown', (e) => {
   if (currentTool === 'select') return;
   e.preventDefault();
   const rect = pitch.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
-  drawingStart = { x, y };
+  const rawX = ((e.clientX - rect.left) / rect.width) * 100;
+  const rawY = ((e.clientY - rect.top) / rect.height) * 100;
+  
+  const snap = getSnapPoint(rawX, rawY);
+  drawingStart = snap;
 
-  if (currentTool === 'eraser') {
-    eraseShapeAt(x, y);
-    return;
+  if (currentTool === 'line') {
+    if (!activePassPoints.length) activePassPoints.push(snap);
+    activePassPoints.push(snap);
+    tempShape = createShapeElement('pass-chain', snap.x, snap.y, snap.x, snap.y);
+    updateShapeElement(tempShape, 'pass-chain', 0, 0, 0, 0, activePassPoints);
+    drawOverlay.appendChild(tempShape);
+  } else {
+    tempShape = createShapeElement(currentTool, snap.x, snap.y, snap.x, snap.y);
+    drawOverlay.appendChild(tempShape);
   }
-
-  tempShape = createShapeElement(currentTool, x, y, x, y);
-  drawOverlay.appendChild(tempShape);
 });
 
 drawOverlay.addEventListener('pointermove', (e) => {
   if (!drawingStart || !tempShape) return;
   const rect = pitch.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
-  updateShapeElement(tempShape, currentTool, drawingStart.x, drawingStart.y, x, y);
+  const snap = getSnapPoint(((e.clientX - rect.left) / rect.width) * 100, ((e.clientY - rect.top) / rect.height) * 100);
+
+  if (currentTool === 'line' && activePassPoints.length > 1) {
+    activePassPoints[activePassPoints.length - 1] = snap;
+    updateShapeElement(tempShape, 'pass-chain', 0, 0, 0, 0, activePassPoints);
+  } else {
+    updateShapeElement(tempShape, currentTool, drawingStart.x, drawingStart.y, snap.x, snap.y);
+  }
 });
 
-drawOverlay.addEventListener('pointerup', (e) => {
-  if (!drawingStart) return;
-  const rect = pitch.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
-  if (tempShape) {
-    drawings.push({
-      type: currentTool,
-      start: drawingStart,
-      end: { x, y },
-      element: tempShape
-    });
-  }
+drawOverlay.addEventListener('pointerup', () => {
+  if (tempShape) drawings.push({ type: currentTool, element: tempShape });
+  activePassPoints = [];
   tempShape = null;
   drawingStart = null;
 });
 
-// ---------- OWN FORMATION MODAL ----------
-const formationModal = document.getElementById('formation-modal');
-const formationGrid = document.getElementById('formation-grid');
-const openFormationBtn = document.getElementById('open-formation-modal');
-const closeFormationBtn = document.getElementById('close-formation-modal');
-
+// ---------- MODAL MANAGEMENT ----------
 function getDefenderCount(key) {
   return parseInt(key.slice(1)[0]);
 }
 
-function renderFormationButtons() {
-  const container = document.getElementById('formation-grid');
-  container.innerHTML = '';
-
+function renderModalGrid(gridEl, activeKey, onSelect) {
+  gridEl.innerHTML = '';
   const sortedKeys = Object.keys(formations).sort((a, b) => getDefenderCount(a) - getDefenderCount(b));
   const groups = {};
+  
   sortedKeys.forEach(key => {
     const back = getDefenderCount(key);
     if (!groups[back]) groups[back] = [];
     groups[back].push(key);
   });
 
-  Object.keys(groups)
-    .sort((a, b) => a - b)
-    .forEach(back => {
-      const groupDiv = document.createElement('div');
-      groupDiv.className = 'formation-group';
+  Object.keys(groups).forEach(back => {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'formation-group';
+    
+    const title = document.createElement('p');
+    title.className = 'formation-group-title';
+    title.textContent = `${back}-back Formations`;
+    groupDiv.appendChild(title);
 
-      const title = document.createElement('p');
-      title.className = 'formation-group-title';
-      title.textContent = `${back} back formation`;
-      groupDiv.appendChild(title);
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'formation-group-grid';
 
-      const gridDiv = document.createElement('div');
-      gridDiv.className = 'formation-group-grid';
-
-      groups[back].forEach(key => {
-        const btn = document.createElement('button');
-        btn.className = 'formation-btn';
-        btn.textContent = key.toUpperCase().replace('D', ' Diamond');
-        btn.dataset.formation = key;
-        if (key === activeFormation) btn.classList.add('active');
-        btn.addEventListener('click', () => {
-          activeFormation = key;
-          renderFormation();
-          closeFormationModal();
-          renderFormationButtons();
-        });
-        gridDiv.appendChild(btn);
-      });
-
-      groupDiv.appendChild(gridDiv);
-      container.appendChild(groupDiv);
+    groups[back].forEach(key => {
+      const btn = document.createElement('button');
+      btn.className = 'formation-btn';
+      btn.textContent = formationNames[key] || key.toUpperCase();
+      if (key === activeKey) btn.classList.add('active');
+      btn.addEventListener('click', () => onSelect(key));
+      gridDiv.appendChild(btn);
     });
-}
 
-function openFormationModal() {
-  formationModal.classList.remove('hidden');
-  renderFormationButtons();
-}
-
-function closeFormationModal() {
-  formationModal.classList.add('hidden');
-}
-
-openFormationBtn.addEventListener('click', openFormationModal);
-closeFormationBtn.addEventListener('click', closeFormationModal);
-
-// ---------- ENEMY MODAL ----------
-const enemyModal = document.getElementById('enemy-modal');
-const enemyGrid = document.getElementById('enemy-formation-grid');
-const openEnemyBtn = document.getElementById('open-enemy-modal');
-const closeEnemyBtn = document.getElementById('close-enemy-modal');
-const manMarkingBtn = document.getElementById('man-marking-toggle');
-
-function updateManMarkingButton() {
-  if (enemyManMarking) {
-    manMarkingBtn.textContent = 'Man‑to‑man marking: ON';
-    manMarkingBtn.classList.add('active');
-  } else {
-    manMarkingBtn.textContent = 'Man‑to‑man marking: OFF';
-    manMarkingBtn.classList.remove('active');
-  }
-}
-
-function renderEnemyFormationButtons() {
-  enemyGrid.innerHTML = '';
-  Object.keys(formations).forEach(key => {
-    const btn = document.createElement('button');
-    btn.className = 'formation-btn';
-    btn.textContent = key.toUpperCase().replace('D', ' Diamond');
-    btn.dataset.formation = key;
-    if (key === activeEnemyFormation) btn.classList.add('active');
-    btn.addEventListener('click', () => {
-      activeEnemyFormation = key;
-      enemyManMarking = false;
-      updateManMarkingButton();
-      renderEnemy();
-      closeEnemyModal();
-      renderEnemyFormationButtons();
-    });
-    enemyGrid.appendChild(btn);
+    groupDiv.appendChild(gridDiv);
+    gridEl.appendChild(groupDiv);
   });
 }
 
-manMarkingBtn.addEventListener('click', () => {
-  enemyManMarking = !enemyManMarking;
-  updateManMarkingButton();
-  renderEnemy();
+const fModal = document.getElementById('formation-modal');
+const eModal = document.getElementById('enemy-modal');
+
+document.getElementById('open-formation-modal').addEventListener('click', () => {
+  renderModalGrid(document.getElementById('formation-grid'), activeFormation, (key) => {
+    activeFormation = key;
+    renderFormation();
+    fModal.classList.add('hidden');
+  });
+  fModal.classList.remove('hidden');
 });
 
-function openEnemyModal() {
-  enemyModal.classList.remove('hidden');
-  renderEnemyFormationButtons();
-}
-
-function closeEnemyModal() {
-  enemyModal.classList.add('hidden');
-}
-
-openEnemyBtn.addEventListener('click', openEnemyModal);
-closeEnemyBtn.addEventListener('click', closeEnemyModal);
-
-// Close modals on overlay click
-document.addEventListener('click', (e) => {
-  if (e.target === formationModal) closeFormationModal();
-  if (e.target === enemyModal) closeEnemyModal();
+document.getElementById('open-enemy-modal').addEventListener('click', () => {
+  renderModalGrid(document.getElementById('enemy-formation-grid'), activeEnemyFormation, (key) => {
+    activeEnemyFormation = key;
+    renderEnemy();
+    eModal.classList.add('hidden');
+  });
+  eModal.classList.remove('hidden');
 });
 
-// Escape key closes everything
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    closeFormationModal();
-    closeEnemyModal();
-    closeRoleMenu();
-  }
-});
+document.getElementById('close-formation-modal').addEventListener('click', () => fModal.classList.add('hidden'));
+document.getElementById('close-enemy-modal').addEventListener('click', () => eModal.classList.add('hidden'));
 
-// ---------- INITIAL RENDER ----------
+// ---------- INIT ----------
+initZones();
 renderFormation();
 renderEnemy();
-renderFormationButtons();
-updateManMarkingButton();

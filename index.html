@@ -1,98 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Touchline Board</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tactical Board - Touchline Style</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Touchline Board</h1>
-        <div class="header-buttons">
-            <button id="open-formation-modal">Formation</button>
-            <button id="open-enemy-modal">Enemy</button>
+
+  <div class="app-layout">
+    <header class="top-header">
+      <div class="header-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="brand-icon">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <line x1="12" y1="4" x2="12" y2="20"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <h2>Tactical Board</h2>
+      </div>
+
+      <div class="header-controls">
+        <div class="formation-selector-wrapper">
+
+          <button id="open-formation-modal" class="header-btn">
+            <span id="home-formation-label">Formation</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
         </div>
+
+        <div class="header-divider"></div>
+
+        <div class="formation-selector-wrapper">
+          <button id="open-enemy-modal" class="header-btn">
+            <span id="away-formation-label">Enemy</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </div>
+
+        <div class="header-divider"></div>
+        
+        <div class="zone-selector">
+            <button id="toggle-zones-btn" class="header-btn">
+            <span>Zones</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+        </div>
+      </div>
     </header>
 
-    <div class="main-content">
-        <!-- Sidebar with drawing tools -->
-        <aside class="sidebar">
-            <button class="icon-btn active" data-tool="select" title="Select/Move"><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 16 16"><path fill="#000000" d="M13.5 2.4c-.4-.4-1-.5-1.5-.3c0-.3-.1-.6-.4-.9c-.2-.2-.6-.4-1.1-.4c-.3 0-.5.1-.7.1c0-.2-.1-.3-.2-.5c-.5-.6-1.5-.6-2 0c-.2.2-.4.4-.4.6C7 1 6.8.9 6.6.9c-.5 0-.8.2-1.1.5C5 1.9 5 2.7 5 2.7v3.8c-.3-.3-.8-.8-1.5-.8c-.2 0-.5.1-.7.2c-.4.2-.6.5-.7.9c-.3 1 .6 2.4.6 2.5c.1.1 1.2 2.7 2.2 3.8C5.9 14.3 7 15 9.8 15c2.9 0 4.2-1.6 4.2-5.1V4.4c0-.1.1-1.3-.5-2zM8 2c0-.3-.1-1 .5-1c.5 0 .5.5.5 1v4c0 .3.2.5.5.5s.5-.2.5-.5V2.2s0-.4.5-.4c.6 0 .5.9.5.9V6c0 .3.2.5.5.5s.5-.2.5-.5V3.6c0-.1 0-.6.5-.6s.5 1 .5 1v5.9c0 3.4-1.3 4.1-3.2 4.1c-2.4 0-3.3-.5-4.1-1.6c-.9-1-2.1-3.6-2.1-3.7c-.3-.3-.7-1.2-.6-1.6c0-.1.1-.2.2-.3c.1 0 .2-.1.2-.1c.4 0 .8.5.9.7l.6.9c.1.2.4.3.6.2c.4 0 .5-.2.5-.4V2.9c0-.4 0-1 .5-1c.4 0 .5.3.5.8V6c0 .3.2.5.5.5S8 6.3 8 6z"/></svg></button>
-            <button class="icon-btn" data-tool="line" title="Line"><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 1024 1024"><path fill="#000000" d="M960 192h-64q-7 0-15-2L190 881q2 8 2 15v64q0 26-18.5 45t-45.5 19H64q-26 0-45-19T0 960v-64q0-27 19-45.5T64 832h64q7 0 15 2l691-691q-2-8-2-15V64q0-26 18.5-45T896 0h64q26 0 45 19t19 45v64q0 27-19 45.5T960 192z"/></svg></button>
-            <button class="icon-btn" data-tool="rect" title="Rectangle"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 0 1-1.125-1.125v-3.75ZM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-8.25ZM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-2.25Z" />
-            </svg>
-            </button>
-            <button class="icon-btn" data-tool="arrow" title="Arrow"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-            </svg>
-            </button>
-            <button class="icon-btn" data-tool="eraser" title="Eraser"><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24"><path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.788 20.5h9.02m-9.02 0a3.47 3.47 0 0 0 2.486-1.02l1.29-1.29M9.788 20.5a3.47 3.47 0 0 1-2.438-1.02l-3.33-3.33a3.48 3.48 0 0 1 0-4.923l1.29-1.29m0 0l5.417-5.417a3.48 3.48 0 0 1 4.923 0l3.33 3.33a3.48 3.48 0 0 1 0 4.924l-5.417 5.416M5.31 9.936l.367.368l7.585 7.585l.301.301"/></svg></button>
-            <button class="icon-btn" id="clear-drawings" title="Clear Drawings"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-            </svg>
-            </button>
-        </aside>
+    <div class="app-container">
+      <div class="sidebar">
+        <button data-tool="select" class="active" title="Select / Move">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2l12 11.2-5.8.5 3.3 7.3-2.2 1-3.2-7.4L7 18.5V2z"/></svg>
+        </button>
+        <button data-tool="line" title="Pass Chain">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M16 6l6 6-6 6"/></svg>
+        </button>
+        <button data-tool="arrow" title="Run Arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19L19 5M19 5h-9M19 5v9"/></svg>
+        </button>
+        <button data-tool="rect" title="Zone Rectangle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        </button>
+        <button data-tool="eraser" title="Eraser">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13l-5 5L4 9l5-5 9 9zM14.5 9.5l3 3"/></svg>
+        </button>
+        <button id="clear-drawings" title="Clear All Drawings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        </button>
 
-        <!-- Pitch area -->
-        <div id="main-menu">
-            <div id="pitch" class="pitch">
-                <!-- Pitch markings -->
-                <div class="halfway-line"></div>
-                <div class="center-circle"></div>
-                <div class="center-spot"></div>
-                <div class="penalty-box left"></div>
-                <div class="penalty-arc left"></div>
-                <div class="penalty-spot left"></div>
-                <div class="sixyard-area left"></div>
-                <div class="penalty-box right"></div>
-                <div class="penalty-arc right"></div>
-                <div class="penalty-spot right"></div>
-                <div class="sixyard-area right"></div>
-                <div class="corner top-left"></div>
-                <div class="corner top-right"></div>
-                <div class="corner bottom-left"></div>
-                <div class="corner bottom-right"></div>
+        <div class="sidebar-divider"></div>
 
-                <!-- SVG overlay for drawings -->
-                <svg id="draw-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <defs>
-                        <marker id="arrowhead" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
-                            <polygon points="0,0 4,2 0,4" fill="#fbbf24" />
-                        </marker>
-                    </defs>
-                </svg>
+        <button id="zoom-in" title="Zoom In">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button id="zoom-out" title="Zoom Out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+        </button>
+      </div>
+
+      <div class="pitch-wrapper" id="pitch-wrapper">
+        <div id="pitch-zoom-container">
+          <div id="pitch" class="pitch">
+            <div class="pitch-stripes">
+              <div></div><div></div><div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div><div></div>
             </div>
+
+            <div id="pitch-zones" class="pitch-zones hidden"></div>
+
+            <svg id="draw-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                  <polygon points="0 0, 6 3, 0 6" fill="#fbbf24" />
+                </marker>
+              </defs>
+            </svg>
+
+            <div class="pitch-line center-line"></div>
+            <div class="pitch-circle center-circle"></div>
+            <div class="pitch-dot center-dot"></div>
+
+            <div class="pitch-area penalty-left"></div>
+            <div class="pitch-area goal-left"></div>
+            <div class="pitch-arc arc-left"></div>
+
+            <div class="pitch-area penalty-right"></div>
+            <div class="pitch-area goal-right"></div>
+            <div class="pitch-arc arc-right"></div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Your Formation Modal -->
-    <div id="formation-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Choose Formation</h2>
-                <button id="close-formation-modal" class="close-btn">&times;</button>
-            </div>
-            <div class="formation-grid" id="formation-grid"></div>
-        </div>
+  <div id="formation-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Select Home Formation</h3>
+        <button id="close-formation-modal" class="close-btn">&times;</button>
+      </div>
+      <div id="formation-grid" class="formation-grid"></div>
     </div>
+  </div>
 
-    <!-- Enemy Formation Modal -->
-    <div id="enemy-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Enemy Formation</h2>
-                <button id="close-enemy-modal" class="close-btn">&times;</button>
-            </div>
-            <button id="man-marking-toggle" class="man-marking-btn">Man-to-man marking: OFF</button>
-            <div class="formation-grid" id="enemy-formation-grid"></div>
-        </div>
+  <div id="enemy-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Select Away Formation</h3>
+        <button id="close-enemy-modal" class="close-btn">&times;</button>
+      </div>
+      <div id="enemy-formation-grid" class="formation-grid"></div>
     </div>
+  </div>
 
-    <script src="script.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.js"></script>
-
+  <script src="script.js"></script>
 </body>
 </html>
