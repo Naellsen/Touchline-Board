@@ -21,33 +21,7 @@ document.getElementById('zoom-out').addEventListener('click', () => {
   }
 });
 
-// ---------- ZONE SYSTEM (DYNAMIC JS RENDER) ----------
-const zonesData = [
-  1, 4, 7, 10, 13, 16,
-  2, 5, 8, 11, 14, 17,
-  3, 6, 9, 12, 15, 18
-];
-
-function initZones() {
-  const container = document.getElementById('pitch-zones');
-  container.innerHTML = '';
-
-  zonesData.forEach(num => {
-    const div = document.createElement('div');
-    div.className = `zone ${num === 14 ? 'zone-14' : ''}`;
-    div.textContent = num;
-    div.dataset.zone = num;
-    container.appendChild(div);
-  });
-}
-
-const toggleZonesBtn = document.getElementById('toggle-zones-btn');
-const zonesOverlay = document.getElementById('pitch-zones');
-
-toggleZonesBtn.addEventListener('click', () => {
-  zonesOverlay.classList.toggle('hidden');
-  toggleZonesBtn.classList.toggle('active');
-});
+// ---------- ZONE SYSTEM (DYNAMIC JS RENDER, SWITCHABLE 18 / 20 / AZ) ----------
 
 
 
@@ -549,6 +523,5 @@ document.getElementById('close-formation-modal').addEventListener('click', () =>
 document.getElementById('close-enemy-modal').addEventListener('click', () => eModal.classList.add('hidden'));
 
 // ---------- INIT ----------
-initZones();
 renderFormation();
 renderEnemy();

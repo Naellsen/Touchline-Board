@@ -243,6 +243,36 @@ body {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
+/* 20-ZONE SYSTEM — direct grid mirroring the reference layout:
+   attacking third (18/20/19) at top, defensive third (1/2/3) at bottom,
+   two midfield bands each with wide flank cells (near/far split) either
+   side of a 3-wide central lane. */
+.pitch-zones.zones20 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  grid-template-areas:
+    "z18 z20 z20 z20 z19"
+    "z18 z20 z20 z20 z19"
+    "z12 z13 z14 z15 z17"
+    "z11 z13 z14 z15 z16"
+    "z5  z6  z7  z8  z10"
+    "z4  z6  z7  z8  z9"
+    "z1  z2  z2  z2  z3"
+    "z1  z2  z2  z2  z3";
+}
+
+.zones20 .zcell {
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbbf24;
+  font-weight: 800;
+  font-size: 14px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
 /* PITCH MARKINGS */
 .pitch-line, .pitch-circle, .pitch-area, .pitch-arc, .pitch-dot {
   position: absolute;
