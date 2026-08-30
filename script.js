@@ -21,9 +21,125 @@ document.getElementById('zoom-out').addEventListener('click', () => {
   }
 });
 
-// ---------- ZONE SYSTEM (DYNAMIC JS RENDER, SWITCHABLE 18 / 20 / AZ) ----------
+// ---------- ZONE SYSTEM ----------
+let activeZoneSystem = 'none';
 
+const zoneConfigurations = {
+  // Standard 18-Zone Layout (Numbered 1-18 from Left to Right, Top to Bottom)
+  18: {
+    className: 'grid-18',
+    label: '18 Zones',
+    zones: [
+      { id: 1, col: 1, row: 1 },  { id: 4, col: 2, row: 1 },  { id: 7, col: 3, row: 1 },  { id: 10, col: 4, row: 1 }, { id: 13, col: 5, row: 1 }, { id: 16, col: 6, row: 1 },
+      { id: 2, col: 1, row: 2 },  { id: 5, col: 2, row: 2 },  { id: 8, col: 3, row: 2 },  { id: 11, col: 4, row: 2 }, { id: 14, col: 5, row: 2 }, { id: 17, col: 6, row: 2 },
+      { id: 3, col: 1, row: 3 },  { id: 6, col: 2, row: 3 },  { id: 9, col: 3, row: 3 },  { id: 12, col: 4, row: 3 }, { id: 15, col: 5, row: 3 }, { id: 18, col: 6, row: 3 }
+    ]
+  },
 
+  // 20-Zone Layout
+  // 20-Zone Layout (Phase of Play matching the reference image)
+  // 20-Zone Layout (Exact Phase of Play rotation)
+  // 20-Zone Layout (Exact Phase of Play rotation)
+  20: {
+    className: 'grid-20',
+    label: '20 Zones',
+    zones: [
+      // Left Goal / Defensive Third (Zones 1-3)
+      { id: 1, col: 1, row: 5 },
+      { id: 2, col: 1, row: '2 / span 3' },
+      { id: 3, col: 1, row: 1 },
+
+      // Middle Defensive Phases (Zones 4-10)
+      { id: 9, col: 2, row: 5 },
+      { id: 8, col: '2/ span 2', row: 4 },
+      { id: 7, col: '2 / span 2', row: 3 },
+      { id: 6, col: '2/ span 2', row: 2 },
+      { id: 10, col: 3, row: 5 },
+      { id: 4, col:2, row: 1 },
+      { id: 5, col: 3, row: 1 },
+
+      // Middle Attacking Phases (Zones 11-17)
+      { id: 16, col: 4, row: 5 },
+      { id: 11, col: 4, row: 1 },
+      { id: 17, col: 5, row: 5 },
+      { id: 15, col: '4 / span 2', row: 4 },
+      { id: 14, col: '4 / span 2', row: 3 },
+      { id: 13, col: '4 / span 2', row: 2 },
+      { id: 12, col: 5, row: 1 },
+
+      // Right Goal / Attacking Third (Zones 18-20)
+      { id: 18, col: 6, row: 5 },
+      { id: 20, col: 6, row: '2 / span 3' },
+      { id: 19, col: 6, row: 1 }
+    ]
+  },
+
+  // 5 Tactical Channels Layout
+  channels: {
+    className: 'grid-channels',
+    label: '5 Channels',
+    zones: [
+      { text: 'Channel', col: 1, row: 1 },
+      { text: 'Half Space', col: 1, row: 2, customClass: 'half-space' },
+      { text: 'Central Zone', col: 1, row: 3, customClass: 'central-zone' },
+      { text: 'Half Space', col: 1, row: 4, customClass: 'half-space' },
+      { text: 'Channel', col: 1, row: 5 },
+
+      { text: 'Channel', col: 2, row: 1 },
+      { text: 'Half Space', col: 2, row: 2, customClass: 'half-space' },
+      { text: 'Central Zone', col: 2, row: 3, customClass: 'central-zone' },
+      { text: 'Half Space', col: 2, row: 4, customClass: 'half-space' },
+      { text: 'Channel', col: 2, row: 5 }
+    ]
+  }
+};
+
+function renderPitchZones() {
+  const zonesContainer = document.getElementById('pitch-zones');
+  zonesContainer.innerHTML = '';
+
+  if (activeZoneSystem === 'none' || !zoneConfigurations[activeZoneSystem]) {
+    zonesContainer.className = 'pitch-zones hidden';
+    document.getElementById('zone-label').textContent = 'Zones';
+    return;
+  }
+
+  const config = zoneConfigurations[activeZoneSystem];
+  document.getElementById('zone-label').textContent = config.label;
+  zonesContainer.className = `pitch-zones ${config.className}`;
+
+  config.zones.forEach(zone => {
+    const el = document.createElement('div');
+    el.className = `zone ${zone.customClass || ''}`;
+    el.textContent = zone.text || zone.id;
+
+    if (zone.customClass) el.classList.add('channel-label');
+    el.style.gridColumn = zone.col;
+    el.style.gridRow = zone.row;
+
+    zonesContainer.appendChild(el);
+  });
+}
+
+// Modal Handlers for Zones
+const zoneModal = document.getElementById('zone-modal');
+document.getElementById('open-zone-modal').addEventListener('click', () => {
+  zoneModal.classList.remove('hidden');
+});
+
+document.getElementById('close-zone-modal').addEventListener('click', () => {
+  zoneModal.classList.add('hidden');
+});
+
+document.querySelectorAll('#zone-modal-grid .formation-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#zone-modal-grid .formation-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeZoneSystem = btn.dataset.zone;
+    renderPitchZones();
+    zoneModal.classList.add('hidden');
+  });
+});
 
 // ---------- ROLE DATA ----------
 const roleCategories = {
@@ -57,7 +173,6 @@ const formationNames = {
 };
 
 const formations = {
-  // 4-BACK FORMATIONS
   f442: [
     [6, 50, 'GK', 'Player 1'],
     [24, 85, 'WB', 'Player 2'], [20, 62, 'CB', 'Player 3'], [20, 38, 'CB', 'Player 4'], [24, 15, 'WB', 'Player 5'],
@@ -90,8 +205,6 @@ const formations = {
     [60, 85, 'W', 'Player 7'], [58, 62, 'CM', 'Player 8'], [58, 38, 'CM', 'Player 9'], [60, 15, 'W', 'Player 10'],
     [82, 50, 'ST', 'Player 11']
   ],
-
-  // 3-BACK FORMATIONS
   f352: [
     [6, 50, 'GK', 'Player 1'],
     [20, 72, 'CB', 'Player 2'], [18, 50, 'CB', 'Player 3'], [20, 28, 'CB', 'Player 4'],
@@ -104,8 +217,6 @@ const formations = {
     [48, 88, 'WB', 'Player 5'], [48, 60, 'CM', 'Player 6'], [48, 40, 'CM', 'Player 7'], [48, 12, 'WB', 'Player 8'],
     [78, 82, 'W', 'Player 9'], [82, 50, 'ST', 'Player 10'], [78, 18, 'W', 'Player 11']
   ],
-
-  // 5-BACK FORMATIONS
   f532: [
     [6, 50, 'GK', 'Player 1'],
     [24, 88, 'WB', 'Player 2'], [20, 68, 'CB', 'Player 3'], [18, 50, 'CB', 'Player 4'], [20, 32, 'CB', 'Player 5'], [24, 12, 'WB', 'Player 6'],
@@ -126,8 +237,8 @@ const formations = {
   ]
 };
 
-let activeFormation = true;
-let activeEnemyFormation = true;
+let activeFormation = 'f442';
+let activeEnemyFormation = 'f442';
 
 // ---------- ROLE MENU ----------
 const roleMenu = document.createElement('div');
@@ -525,3 +636,4 @@ document.getElementById('close-enemy-modal').addEventListener('click', () => eMo
 // ---------- INIT ----------
 renderFormation();
 renderEnemy();
+renderPitchZones();

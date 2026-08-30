@@ -21,7 +21,6 @@
 
       <div class="header-controls">
         <div class="formation-selector-wrapper">
-
           <button id="open-formation-modal" class="header-btn">
             <span id="home-formation-label">Formation</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -36,6 +35,16 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
           </button>
         </div>
+
+        <div class="header-divider"></div>
+
+        <div class="zone-selector">
+          <button id="open-zone-modal" class="header-btn">
+            <span id="zone-label">Zones</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </div>
+
       </div>
     </header>
 
@@ -122,6 +131,21 @@
         <button id="close-enemy-modal" class="close-btn">&times;</button>
       </div>
       <div id="enemy-formation-grid" class="formation-grid"></div>
+    </div>
+  </div>
+
+  <div id="zone-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Select Zone System</h3>
+        <button id="close-zone-modal" class="close-btn">&times;</button>
+      </div>
+      <div id="zone-modal-grid" class="formation-group-grid">
+        <button class="formation-btn active" data-zone="none">None</button>
+        <button class="formation-btn" data-zone="18">18 Zones</button>
+        <button class="formation-btn" data-zone="20">20 Zones</button>
+        <button class="formation-btn" data-zone="channels">5 Channels</button>
+      </div>
     </div>
   </div>
 
