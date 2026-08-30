@@ -42,12 +42,12 @@ const zoneConfigurations = {
   // 20-Zone Layout (Exact Phase of Play rotation)
   20: {
     className: 'grid-20',
-    label: '20 Zones',
+    label: 'Pep Zone',
     zones: [
       // Left Goal / Defensive Third (Zones 1-3)
-      { id: 1, col: 1, row: 5 },
+      { id: 3, col: 1, row: 5 },
       { id: 2, col: 1, row: '2 / span 3' },
-      { id: 3, col: 1, row: 1 },
+      { id: 1, col: 1, row: 1 },
 
       // Middle Defensive Phases (Zones 4-10)
       { id: 9, col: 2, row: 5 },
@@ -68,9 +68,9 @@ const zoneConfigurations = {
       { id: 12, col: 5, row: 1 },
 
       // Right Goal / Attacking Third (Zones 18-20)
-      { id: 18, col: 6, row: 5 },
+      { id: 19, col: 6, row: 5 },
       { id: 20, col: 6, row: '2 / span 3' },
-      { id: 19, col: 6, row: 1 }
+      { id: 18, col: 6, row: 1 }
     ]
   },
 
@@ -237,8 +237,8 @@ const formations = {
   ]
 };
 
-let activeFormation = 'f442';
-let activeEnemyFormation = 'f442';
+let activeFormation = true;
+let activeEnemyFormation = true;
 
 // ---------- ROLE MENU ----------
 const roleMenu = document.createElement('div');
